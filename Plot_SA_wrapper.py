@@ -237,7 +237,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     fixed_periods = [0.3, 1.0, 3.0, 0.0]
-    compiled_csv = "/Users/briertonsharp/Desktop/LA_Basin/disagg_py/DowntownLA_Ruptures/selected_events.csv"
+    compiled_csv = "/Users/briertonsharp/Desktop/LA_Basin/disagg_py/DowntownLA_Ruptures/selected_events_test.csv"
 
     # Run an extra pass to sort any remaining rand_mean files before processing events.
     downtownLA_dir = "/Users/briertonsharp/Desktop/LA_Basin/disagg_py/DowntownLA"
