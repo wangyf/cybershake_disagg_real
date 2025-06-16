@@ -54,8 +54,18 @@ def query_ids(line):
     return res
 
 
+# class Disagg:
+#     def __init__(self, STUDY_ID=7):
+#         # Start a connection
+#         self.conn = mysql.connector.connect(
+#             host="moment.usc.edu",
+#             user="cybershk_ro",
+#             password="CyberShake2007",
+#             database="CyberShake",
+#             use_unicode=True,
+#         )
 class Disagg:
-    def __init__(self, STUDY_ID=7):
+    def __init__(self, STUDY_ID=13):
         # Start a connection
         self.conn = mysql.connector.connect(
             host="moment.usc.edu",
@@ -84,9 +94,19 @@ class Disagg:
                 for i in range(self.args['topk']):
                     self.plot_SA_map(**df_sources.iloc[i].to_dict(), period=period)
 
+    # def query_all_sites(self):
+    #     """Query site table
+    #         STUDY_ID = 7 # Study 15.12, with high-frequency statistical implementation
+    #     """
+    #     cmd = (
+    #         f'select S.CS_Short_Name, S.CS_Site_Name, S.CS_Site_Lat, S.CS_Site_Lon '
+    #         f'from CyberShake_Sites S, CyberShake_Runs R '
+    #         f'where R.Study_ID={self.STUDY_ID} '
+    #         f'and R.Site_ID=S.CS_Site_ID;'
+    #     )
     def query_all_sites(self):
         """Query site table
-            STUDY_ID = 7 # Study 15.12, with high-frequency statistical implementation
+            STUDY_ID = 12 # Study 22.12, with high-frequency statistical implementation
         """
         cmd = (
             f'select S.CS_Short_Name, S.CS_Site_Name, S.CS_Site_Lat, S.CS_Site_Lon '
@@ -114,7 +134,7 @@ class Disagg:
         parser.add_argument('--gmpe', '-g', default='NGAWest_2014_AVG_NOIDRISS', type=str, help='GMPE used for basemap')
         parser.add_argument('--prob', '-b', default=4e-4, type=float, help='Exceedance probability')
         parser.add_argument('--plot_sa_map', '-sa', type=bool, default=True, help='Whether to plot SA maps for random realizations, 1 [True] or 0 [False]')
-        parser.add_argument('--study', '-st', default="STUDY_15_12", type=str, help='CyberShake study ID, default = STUDY_15_12')
+        parser.add_argument('--study', '-st', default="STUDY_22_12", type=str, help='CyberShake study ID, default = STUDY_22_12')
         parser.add_argument('--cmap', '-c', type=str, default='inferno', help='Colormap of theGMT location map')
         parser.add_argument('--force_update', '-f', default=0, type=bool, help='Whether to force updating queried results, instead of using existing ones directly')
         parser.add_argument('--resolution', '-r', default=15, type=int, help='Resolution of the GMT location map, in arcsec, default=15')
@@ -366,29 +386,30 @@ class Disagg:
         print(f'{df_sources[:args["topk"]].set_index("source_desc")}')
         return dfs, df_sources
     
-    # def plot_SA_map(self, **kwargs):
-    #     args = {**self.args, **kwargs}
-    #     if any('spatial' in k for k in args.keys()):
-    #         cmd = (
-    #             f"java -Xmx2G -cp opensha-cybershake-all.jar ",
-    #             f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
-    #             f"--study {args['study']} --period {args['period']} ",
-    #             f"--source-id {args['source_id']} --rupture-id {args['rup_id']} ",
-    #             f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} ",
-    #             f"--spatial-corr-fields {args['spatial_corr_fields']} ",
-    #             f"--spacing {args['spacing']} -o {self.directory}",
-    #             )
-    #     else:
-    #         cmd = (
-    #             f"java -Xmx2G -cp opensha-cybershake-all.jar ",
-    #             f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
-    #             f"--study {args['study']} --period {args['period']} ",
-    #             f"--source-id {args['source_id']} --rupture-id {args['rup_id']} ",
-    #             f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} ",
-    #             f"--spacing {args['spacing']} -o {self.directory}",
-    #             )
-    #     print("".join(cmd))
-    #     call_sub("".join(cmd), shell=True, timeout=args['timeout'])
+    #original section
+    def plot_SA_map(self, **kwargs):
+        args = {**self.args, **kwargs}
+        if any('spatial' in k for k in args.keys()):
+            cmd = (
+                f"java -Xmx2G -cp opensha-cybershake-all.jar ",
+                f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
+                f"--study {args['study']} --period {args['period']} ",
+                f"--source-id {args['source_id']} --rupture-id {args['rup_id']} ",
+                f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} ",
+                f"--spatial-corr-fields {args['spatial_corr_fields']} ",
+                f"--spacing {args['spacing']} -o {self.directory}",
+                )
+        else:
+            cmd = (
+                f"java -Xmx2G -cp opensha-cybershake-all.jar ",
+                f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
+                f"--study {args['study']} --period {args['period']} ",
+                f"--source-id {args['source_id']} --rupture-id {args['rup_id']} ",
+                f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} ",
+                f"--spacing {args['spacing']} -o {self.directory}",
+                )
+        print("".join(cmd))
+        call_sub("".join(cmd), shell=True, timeout=args['timeout'])
 
     # def plot_SA_map(self, **kwargs):
     #     args = {**self.args, **kwargs}
@@ -442,128 +463,128 @@ class Disagg:
 
 
 
-# #Working section                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-#     def plot_SA_map(self, **kwargs):
-#         args = {**self.args, **kwargs}
-#         if any('spatial' in k for k in args.keys()):
-#             rup_ID_try = 8
-#             while rup_ID_try == 8:
-#                 try:
-#                     # cmd = (
-#                     #     f"java -Xmx2G -cp opensha-cybershake-all.jar "
-#                     #     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
-#                     #     f"--study {args['study']} --period {args['period']} "
-#                     #     f"--source-id {args['source_id']}  --rupture-id {args['rup_id']} "
-#                     #     f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
-#                     #     f"--spacing {args['spacing']} -o {self.directory}"
-#                     #  )
-#                 #gmpe at cs sites
-#                     # cmd = (
-#                     #     f"java -Xmx2G -cp opensha-cybershake-all.jar "
-#                     #     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
-#                     #     f"--study {args['study']} --period {args['period']} "
-#                     #     f"--source-id {args['source_id']}  --rupture-id {args['rup_id']} "
-#                     #     f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
-#                     #     f"--calc-gmpe-at-cs-sites "
-#                     #     f"--spatial-corr-fields {args['spatial_corr_fields']} "
-#                     #     f"--spacing {args['spacing']} -o {self.directory}"
-#                     # )
-#                 # Raw cybershake
-#                     cmd = (
-#                         f"java -Xmx2G -cp opensha-cybershake-all.jar ",
-#                         f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
-#                         f"--study {args['study']} --period {args['period']} ",
-#                         f"--source-id {args['source_id']} --rupture-id {args['rup_id']} ",
-#                         f"--rupture-var-id {args['rup_var_id']} ",
-#                         f"--spatial-corr-fields {args['spatial_corr_fields']} ",
-#                         # f"--colorbar-min {0} ",
-#                         # f"--colorbar-max {0.6} ",
-#                         f"--spatial-corr-debug ",  
-#                         f"--download-interpolated ", 
-#                         f"--spacing {args['spacing']} -o {self.directory}",
-#                         )
-#                 # Interp grid
-#                     # cmd = (
-#                     #     f"java -Xmx2G -cp opensha-cybershake-all.jar ",
-#                     #     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
-#                     #     f"--study {args['study']} --period {args['period']} ",
-#                     #     f"--source-id {args['source_id']} --rupture-id {args['rup_id']} ",
-#                     #     f"--download-interpolated ",
-#                     #     f"--rupture-var-id {args['rup_var_id']} ",
-#                     #     f"--spacing {args['spacing']} -o {self.directory} ", 
-#                     #     )
+#Working section                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+    # def plot_SA_map(self, **kwargs):
+    #     args = {**self.args, **kwargs}
+    #     if any('spatial' in k for k in args.keys()):
+    #         rup_ID_try = 8
+    #         while rup_ID_try == 8:
+    #             try:
+    #                 # cmd = (
+    #                 #     f"java -Xmx2G -cp opensha-cybershake-all.jar "
+    #                 #     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
+    #                 #     f"--study {args['study']} --period {args['period']} "
+    #                 #     f"--source-id {args['source_id']}  --rupture-id {args['rup_id']} "
+    #                 #     f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
+    #                 #     f"--spacing {args['spacing']} -o {self.directory}"
+    #                 #  )
+    #             #gmpe at cs sites
+    #                 # cmd = (
+    #                 #     f"java -Xmx2G -cp opensha-cybershake-all.jar "
+    #                 #     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
+    #                 #     f"--study {args['study']} --period {args['period']} "
+    #                 #     f"--source-id {args['source_id']}  --rupture-id {args['rup_id']} "
+    #                 #     f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
+    #                 #     f"--calc-gmpe-at-cs-sites "
+    #                 #     f"--spatial-corr-fields {args['spatial_corr_fields']} "
+    #                 #     f"--spacing {args['spacing']} -o {self.directory}"
+    #                 # )
+    #             # Raw cybershake
+    #                 cmd = (
+    #                     f"java -Xmx2G -cp opensha-cybershake-all.jar ",
+    #                     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
+    #                     f"--study {args['study']} --period {args['period']} ",
+    #                     f"--source-id {args['source_id']} --rupture-id {args['rup_id']} ",
+    #                     f"--rupture-var-id {args['rup_var_id']} ",
+    #                     f"--spatial-corr-fields {args['spatial_corr_fields']} ",
+    #                     # f"--colorbar-min {0} ",
+    #                     # f"--colorbar-max {0.6} ",
+    #                     f"--spatial-corr-debug ",  
+    #                     f"--download-interpolated ", 
+    #                     f"--spacing {args['spacing']} -o {self.directory}",
+    #                     )
+    #             # Interp grid
+    #                 # cmd = (
+    #                 #     f"java -Xmx2G -cp opensha-cybershake-all.jar ",
+    #                 #     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
+    #                 #     f"--study {args['study']} --period {args['period']} ",
+    #                 #     f"--source-id {args['source_id']} --rupture-id {args['rup_id']} ",
+    #                 #     f"--download-interpolated ",
+    #                 #     f"--rupture-var-id {args['rup_var_id']} ",
+    #                 #     f"--spacing {args['spacing']} -o {self.directory} ", 
+    #                 #     )
                    
                     
-#                     print("".join(cmd))
-#                     call_sub("".join(cmd), shell=True, timeout=args['timeout'])
-#                     break
-#                 except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-#                     print(f"CyberShakeScenarioShakeMapGenerator failed: {e}")
+    #                 print("".join(cmd))
+    #                 call_sub("".join(cmd), shell=True, timeout=args['timeout'])
+    #                 break
+    #             except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+    #                 print(f"CyberShakeScenarioShakeMapGenerator failed: {e}")
 
-#                     try:
-#                         cmd = (
-#                             f"java -Xmx2G -cp opensha-cybershake-all.jar "
-#                             f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
-#                             f"--study {args['study']} --period {args['period']} "
-#                             f"--source-id {args['source_id']} --rupture-id {4} "
-#                             f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
-#                             f"--spacing {args['spacing']} -o {self.directory}"
-#                         )
-#                     # gmpe at cs sites
-#                         # cmd = (
-#                         #     f"java -Xmx2G -cp opensha-cybershake-all.jar "
-#                         #     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
-#                         #     f"--study {args['study']} --period {args['period']} "
-#                         #     f"--source-id {args['source_id']}  --rupture-id {4} "
-#                         #     f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
-#                         #     f"--calc-gmpe-at-cs-sites "
-#                         #     f"--spatial-corr-fields {args['spatial_corr_fields']} "
-#                         #     f"--spacing {args['spacing']} -o {self.directory}"
-#                         # )
-#                     # raw cybershake
-#                         # cmd = (
-#                         # f"java -Xmx2G -cp opensha-cybershake-all.jar ",
-#                         # f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
-#                         # f"--study {args['study']} --period {args['period']} ",
-#                         # f"--source-id {args['source_id']} --rupture-id {4} ",
-#                         # f"--rupture-var-id {args['rup_var_id']} ",
-#                         # f"--spatial-corr-fields {args['spatial_corr_fields']} ", 
-#                         # f"--spacing {args['spacing']} -o {self.directory}",
-#                         # )
-#                     # Interp grid
-#                         # cmd = (
-#                         #     f"java -Xmx2G -cp opensha-cybershake-all.jar ",
-#                         #     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
-#                         #     f"--study {args['study']} --period {args['period']} ",
-#                         #     f"--source-id {args['source_id']} --rupture-id {4} ",
-#                         #     f"--download-interpolated ",
-#                         #     f"--rupture-var-id {args['rup_var_id']} ",
-#                         #     f"--spacing {args['spacing']} -o {self.directory} ", 
-#                         #     )
+    #                 try:
+    #                     cmd = (
+    #                         f"java -Xmx2G -cp opensha-cybershake-all.jar "
+    #                         f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
+    #                         f"--study {args['study']} --period {args['period']} "
+    #                         f"--source-id {args['source_id']} --rupture-id {4} "
+    #                         f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
+    #                         f"--spacing {args['spacing']} -o {self.directory}"
+    #                     )
+    #                 # gmpe at cs sites
+    #                     # cmd = (
+    #                     #     f"java -Xmx2G -cp opensha-cybershake-all.jar "
+    #                     #     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
+    #                     #     f"--study {args['study']} --period {args['period']} "
+    #                     #     f"--source-id {args['source_id']}  --rupture-id {4} "
+    #                     #     f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
+    #                     #     f"--calc-gmpe-at-cs-sites "
+    #                     #     f"--spatial-corr-fields {args['spatial_corr_fields']} "
+    #                     #     f"--spacing {args['spacing']} -o {self.directory}"
+    #                     # )
+    #                 # raw cybershake
+    #                     # cmd = (
+    #                     # f"java -Xmx2G -cp opensha-cybershake-all.jar ",
+    #                     # f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
+    #                     # f"--study {args['study']} --period {args['period']} ",
+    #                     # f"--source-id {args['source_id']} --rupture-id {4} ",
+    #                     # f"--rupture-var-id {args['rup_var_id']} ",
+    #                     # f"--spatial-corr-fields {args['spatial_corr_fields']} ", 
+    #                     # f"--spacing {args['spacing']} -o {self.directory}",
+    #                     # )
+    #                 # Interp grid
+    #                     # cmd = (
+    #                     #     f"java -Xmx2G -cp opensha-cybershake-all.jar ",
+    #                     #     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator ",
+    #                     #     f"--study {args['study']} --period {args['period']} ",
+    #                     #     f"--source-id {args['source_id']} --rupture-id {4} ",
+    #                     #     f"--download-interpolated ",
+    #                     #     f"--rupture-var-id {args['rup_var_id']} ",
+    #                     #     f"--spacing {args['spacing']} -o {self.directory} ", 
+    #                     #     )
 
                         
-#                         print("".join(cmd))
-#                         call_sub("".join(cmd), shell=True, timeout=args['timeout'])
-#                         break
-#                     except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-#                         print(f"CyberShakeScenarioShakeMapGenerator retry failed: {e}")
-#                         continue
-#         else:
-#             try:
-#                 cmd = (
-#                     f"java -Xmx2G -cp opensha-cybershake-all.jar "
-#                     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
-#                     f"--study {args['study']} --period {args['period']} "
-#                     f"--source-id {args['source_id']} --rupture-id {args['rup_id']} "
-#                     f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
-#                     f"--spacing {args['spacing']} -o {self.directory}"
-#                 )
+    #                     print("".join(cmd))
+    #                     call_sub("".join(cmd), shell=True, timeout=args['timeout'])
+    #                     break
+    #                 except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+    #                     print(f"CyberShakeScenarioShakeMapGenerator retry failed: {e}")
+    #                     continue
+    #     else:
+    #         try:
+    #             cmd = (
+    #                 f"java -Xmx2G -cp opensha-cybershake-all.jar "
+    #                 f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
+    #                 f"--study {args['study']} --period {args['period']} "
+    #                 f"--source-id {args['source_id']} --rupture-id {args['rup_id']} "
+    #                 f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
+    #                 f"--spacing {args['spacing']} -o {self.directory}"
+    #             )
 
                 
-#                 print("".join(cmd))
-#                 call_sub("".join(cmd), shell=True, timeout=args['timeout'])
-#             except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-#                 print(f"CyberShakeScenarioShakeMapGenerator failed: {e}")
+    #             print("".join(cmd))
+    #             call_sub("".join(cmd), shell=True, timeout=args['timeout'])
+    #         except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+    #             print(f"CyberShakeScenarioShakeMapGenerator failed: {e}")
     
 
 #    #Rupture Varations 
@@ -725,52 +746,52 @@ class Disagg:
 #                 print(f"CyberShakeScenarioShakeMapGenerator failed: {e}")
 
 
-    def plot_SA_map(self, **kwargs):
-        args = {**self.args, **kwargs}
-        if any('spatial' in k for k in args.keys()):
-            for i in range(45):
-                try:
-                    # Command for generating maps
-                    cmd = (
-                        f"java -Xmx2G -cp opensha-cybershake-all.jar "
-                        f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
-                        f"--study {args['study']} --period {args['period']} "
-                        f"--source-id {args['source_id']} --rupture-id {args['rup_id']} "
-                        f"--download-interpolated "
-                        f"--rupture-var-id {i} "
-                        f"--spatial-corr-fields {args['spatial_corr_fields']} "
-                        f"--spacing {args['spacing']} -o {self.directory}"
-                    )
+    # def plot_SA_map(self, **kwargs):
+    #     args = {**self.args, **kwargs}
+    #     if any('spatial' in k for k in args.keys()):
+    #         for i in range(45):
+    #             try:
+    #                 # Command for generating maps
+    #                 cmd = (
+    #                     f"java -Xmx2G -cp opensha-cybershake-all.jar "
+    #                     f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
+    #                     f"--study {args['study']} --period {args['period']} "
+    #                     f"--source-id {args['source_id']} --rupture-id {args['rup_id']} "
+    #                     f"--download-interpolated "
+    #                     f"--rupture-var-id {i} "
+    #                     f"--spatial-corr-fields {args['spatial_corr_fields']} "
+    #                     f"--spacing {args['spacing']} -o {self.directory}"
+    #                 )
                     
-                    print("Executing command:", cmd)
-                    subprocess.run(cmd, shell=True, check=True, timeout=args.get('timeout', 60))
+    #                 print("Executing command:", cmd)
+    #                 subprocess.run(cmd, shell=True, check=True, timeout=args.get('timeout', 60))
 
-                except subprocess.CalledProcessError as e:
-                    print(f"CyberShakeScenarioShakeMapGenerator failed for rupture-var-id {i}: {e}")
-                    # Handle specific errors if necessary or skip to the next iteration
+    #             except subprocess.CalledProcessError as e:
+    #                 print(f"CyberShakeScenarioShakeMapGenerator failed for rupture-var-id {i}: {e}")
+    #                 # Handle specific errors if necessary or skip to the next iteration
 
-                except subprocess.TimeoutExpired as e:
-                    print(f"CyberShakeScenarioShakeMapGenerator timed out for rupture-var-id {i}: {e}")
-                    # Handle timeout specifically if necessary or skip to the next iteration
+    #             except subprocess.TimeoutExpired as e:
+    #                 print(f"CyberShakeScenarioShakeMapGenerator timed out for rupture-var-id {i}: {e}")
+    #                 # Handle timeout specifically if necessary or skip to the next iteration
 
-        else:
-            try:
-                cmd = (
-                    f"java -Xmx2G -cp opensha-cybershake-all.jar "
-                    f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
-                    f"--study {args['study']} --period {args['period']} "
-                    f"--source-id {args['source_id']} --rupture-id {args['rup_id']} "
-                    f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
-                    f"--spacing {args['spacing']} -o {self.directory}"
-                )
-                print("Executing command:", cmd)
-                subprocess.run(cmd, shell=True, check=True, timeout=args.get('timeout', 60))
+    #     else:
+    #         try:
+    #             cmd = (
+    #                 f"java -Xmx2G -cp opensha-cybershake-all.jar "
+    #                 f"org.opensha.sha.cybershake.maps.CyberShakeScenarioShakeMapGenerator "
+    #                 f"--study {args['study']} --period {args['period']} "
+    #                 f"--source-id {args['source_id']} --rupture-id {args['rup_id']} "
+    #                 f"--rupture-var-id {args['rup_var_id']} --gmpe {args['gmpe']} "
+    #                 f"--spacing {args['spacing']} -o {self.directory}"
+    #             )
+    #             print("Executing command:", cmd)
+    #             subprocess.run(cmd, shell=True, check=True, timeout=args.get('timeout', 60))
 
-            except subprocess.CalledProcessError as e:
-                print(f"CyberShakeScenarioShakeMapGenerator failed: {e}")
+    #         except subprocess.CalledProcessError as e:
+    #             print(f"CyberShakeScenarioShakeMapGenerator failed: {e}")
             
-            except subprocess.TimeoutExpired as e:
-                print(f"CyberShakeScenarioShakeMapGenerator timed out: {e}")
+    #         except subprocess.TimeoutExpired as e:
+    #             print(f"CyberShakeScenarioShakeMapGenerator timed out: {e}")
 
 
 
